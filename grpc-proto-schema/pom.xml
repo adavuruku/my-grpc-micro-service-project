@@ -51,7 +51,9 @@
 		</dependency>
 
 		lastly. clean the project and install the project using maven command.
+https://stackoverflow.com/questions/73716766/using-spring-boot-application-as-a-dependency-in-another-project
 
+https://www.linkedin.com/pulse/protobuf-protocol-buffers-simple-introduction-vinoth-selvaraj/
     -->
 
 	<properties>

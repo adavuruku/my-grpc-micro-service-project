@@ -1,0 +1,10 @@
+grpc:
+  client:
+    user-service:
+      address: static://localhost:9000
+      negotiationType: plainText
+    order-service:
+      address: static://localhost:9001
+      negotiationType: plainText
+server:
+  port: 8081
