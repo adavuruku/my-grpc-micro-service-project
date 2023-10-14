@@ -10,6 +10,7 @@ service UserService {
   rpc createUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
   rpc updateUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
   rpc userLogin(UserLoginRequest) returns (UserLoginResponse) {}
+  rpc getUserByUsername(GetUserByUserNameRequest) returns (User) {}
 }
 
 message User {
@@ -43,6 +44,10 @@ message CreateOrSaveUserResponse{
 
 message GetUserRequest {
   string id = 1;
+}
+
+message GetUserByUserNameRequest {
+  string emailAddress = 1;
 }
 
 message ErrorDetail {

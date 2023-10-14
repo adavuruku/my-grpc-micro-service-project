@@ -8,6 +8,8 @@ import com.example.user_service.*;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,7 +20,10 @@ public class UserService {
     @GrpcClient("user-service")
     UserServiceGrpc.UserServiceBlockingStub synchronousClient;
 
-    public CreateUserDtoResponse createUser(CreateUserDtoRequest userDtoRequest) throws IOException {
+    @Autowired
+    PasswordEncoder encoder;
+
+    public CreateUserDtoResponse createUser(CreateUserDtoRequest userDtoRequest) {
         // create user message (protobuf)
         User user = User.newBuilder()
                 .setPhoneNumber(userDtoRequest.getPhoneNumber())
@@ -26,6 +31,7 @@ public class UserService {
                 .setFirstName(userDtoRequest.getFirstName())
                 .setContactAddress(userDtoRequest.getContactAddress())
                 .setEmailAddress(userDtoRequest.getEmailAddress())
+                .setPassword(encoder.encode(userDtoRequest.getPassword()))
                 .build();
         // create the request (protobuf) to pass to server
         CreateOrSaveUserRequest createOrSaveUserRequest = CreateOrSaveUserRequest.newBuilder().setUser(user).build();
@@ -43,7 +49,7 @@ public class UserService {
         return userDtoResponse;
     }
 
-    public UserDtoResponse getUser(String id) throws IOException {
+    public UserDtoResponse getUser(String id) {
         log.info("Processing GET request for user id: {}", id);
         GetUserRequest getUserRequest = GetUserRequest.newBuilder().setId(id).build();
         User responseUser;
@@ -58,6 +64,28 @@ public class UserService {
                 .phoneNumber(responseUser.getPhoneNumber())
                 .firstName(responseUser.getFirstName())
                 .lastName(responseUser.getLastName())
+                .emailAddress(responseUser.getEmailAddress())
+                .id(responseUser.getId()).build();
+        log.debug("Got response: {}", responseUser.toString());
+        return userDtoResponse;
+    }
+
+    public UserDtoResponse getUserByUserName(String userName) {
+        log.info("Processing GET request for user id: {}", userName);
+        GetUserByUserNameRequest getUserByUserNameRequest = GetUserByUserNameRequest.newBuilder().setEmailAddress(userName).build();
+        User responseUser;
+        try {
+            responseUser = synchronousClient.getUserByUsername(getUserByUserNameRequest);
+        } catch (StatusRuntimeException error) {
+            log.error("Error while getting user details, reason {} ", error.getMessage());
+            throw ServiceExceptionMapper.map(error);
+        }
+        UserDtoResponse userDtoResponse = UserDtoResponse.builder()
+                .contactAddress(responseUser.getContactAddress())
+                .phoneNumber(responseUser.getPhoneNumber())
+                .firstName(responseUser.getFirstName())
+                .lastName(responseUser.getLastName())
+                .password(responseUser.getPassword())
                 .emailAddress(responseUser.getEmailAddress())
                 .id(responseUser.getId()).build();
         log.debug("Got response: {}", responseUser.toString());

@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserDtoResponse {
+public class LoginResponseDto {
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String id;
     private String contactAddress;
     private String emailAddress;
-    private String password;
     private String token;
+    private String type = "Bearer";
 }

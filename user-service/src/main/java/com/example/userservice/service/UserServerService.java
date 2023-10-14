@@ -38,7 +38,7 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .firstName(userRequest.getFirstName())
                     .lastName(userRequest.getLastName())
                     .phoneNumber(userRequest.getPhoneNumber())
-                    .password(userRequest.getLastName())
+                    .password(userRequest.getPassword())
                     .contactAddress(userRequest.getContactAddress())
                     .build();
             UserSchema userDto = usersRepository.save(userSchema);
@@ -53,7 +53,7 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
 
     @Override
     public void getUser(GetUserRequest request, StreamObserver<User> responseObserver) {
-        String id = String.valueOf(request.getId());
+        String id = request.getId();
         Optional<UserSchema> userPojo = usersRepository.findById(id);
         if(!userPojo.isPresent()){
             throw new ResourceNotFoundException("Resource not found.",  Map.of("id", id, "message", "Resource Not Found"));
@@ -66,6 +66,30 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .setContactAddress(data.getContactAddress())
                     .setFirstName(data.getFirstName())
                     .setLastName(data.getLastName())
+                    .setPhoneNumber(data.getPhoneNumber()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        responseObserver.onNext(responseUser);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserByUsername(GetUserByUserNameRequest request, StreamObserver<User> responseObserver) {
+        String emailAddress = request.getEmailAddress();
+        UserSchema data = usersRepository.findUserByEmailAddress(emailAddress);
+        if(data == null ){
+            throw new ResourceNotFoundException("Resource not found.",  Map.of("User name", emailAddress, "message", "Resource Not Found"));
+        }
+        User responseUser = null;
+        try {
+            responseUser = User.newBuilder().setId(data.getId())
+                    .setEmailAddress(data.getEmailAddress())
+                    .setContactAddress(data.getContactAddress())
+                    .setFirstName(data.getFirstName())
+                    .setLastName(data.getLastName())
+                    .setPassword(data.getPassword())
                     .setPhoneNumber(data.getPhoneNumber()).build();
         } catch (Exception e) {
             e.printStackTrace();

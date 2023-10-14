@@ -8,3 +8,6 @@ grpc:
       negotiationType: plainText
 server:
   port: 8081
+security-jwt-config:
+  jwtExpirationMs: 86400000
+  jwtSecret: encryptoWearMyWorstAreaIsChoosingASecretAndWellEnough!@
