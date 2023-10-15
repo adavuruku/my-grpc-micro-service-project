@@ -74,7 +74,7 @@ public class UserService {
     }
 
     public UserDtoResponse getUserByUserName(String userName) {
-        log.info("Auth is here Processing GET request for user id: {}", userName);
+        log.info("Processing GET request for user id: {}", userName);
         GetUserByUserNameRequest getUserByUserNameRequest = GetUserByUserNameRequest.newBuilder().setEmailAddress(userName).build();
         User responseUser;
         try {

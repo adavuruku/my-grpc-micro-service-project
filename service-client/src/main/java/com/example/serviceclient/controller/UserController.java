@@ -46,11 +46,12 @@ public class UserController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> get(@PathVariable("id") @NotNull @NotBlank String id, Principal principal){
-//        UserInfoDetails userDetails = (UserInfoDetails) principal;
+    @GetMapping()
+    public ResponseEntity<Object> getUser(Principal principal){
         log.info("Received request for user with id: {}", principal.getName());
-        return ResponseEntity.ok(userClientService.getUser(id));
+        UserDtoResponse userDtoResponse = userClientService.getUserByUserName(principal.getName());
+        userDtoResponse.setPassword(null);
+        return ResponseEntity.ok(userDtoResponse);
     }
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
