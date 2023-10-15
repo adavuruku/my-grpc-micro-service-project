@@ -9,19 +9,22 @@ import io.grpc.StatusRuntimeException;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-@Service
+
 @Log4j2
 public class UserService {
-    @GrpcClient("user-service")
-    UserServiceGrpc.UserServiceBlockingStub synchronousClient;
+    private final UserServiceGrpc.UserServiceBlockingStub synchronousClient;
+    private final PasswordEncoder encoder;
 
-    @Autowired
-    PasswordEncoder encoder;
+    public UserService(UserServiceGrpc.UserServiceBlockingStub synchronousClient, PasswordEncoder encoder){
+        this.synchronousClient = synchronousClient;
+        this.encoder = encoder;
+    }
 
     public CreateUserDtoResponse createUser(CreateUserDtoRequest userDtoRequest) {
         // create user message (protobuf)
@@ -71,7 +74,7 @@ public class UserService {
     }
 
     public UserDtoResponse getUserByUserName(String userName) {
-        log.info("Processing GET request for user id: {}", userName);
+        log.info("Auth is here Processing GET request for user id: {}", userName);
         GetUserByUserNameRequest getUserByUserNameRequest = GetUserByUserNameRequest.newBuilder().setEmailAddress(userName).build();
         User responseUser;
         try {

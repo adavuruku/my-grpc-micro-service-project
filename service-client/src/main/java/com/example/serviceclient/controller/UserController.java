@@ -48,7 +48,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> get(@PathVariable("id") @NotNull @NotBlank String id, Principal principal){
-        log.info("Received request for user with id: {}", id);
+//        UserInfoDetails userDetails = (UserInfoDetails) principal;
+        log.info("Received request for user with id: {}", principal.getName());
         return ResponseEntity.ok(userClientService.getUser(id));
     }
 

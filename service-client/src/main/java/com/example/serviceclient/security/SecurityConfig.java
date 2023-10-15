@@ -25,6 +25,9 @@ public class SecurityConfig {
     UserInfoSecurityService userInfoSecurityService;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -35,7 +38,7 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         authProvider.setUserDetailsService(userInfoSecurityService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         return authProvider;
     }
@@ -60,10 +63,7 @@ public class SecurityConfig {
 
         return http.build();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }
 //https://www.bezkoder.com/spring-boot-jwt-authentication/
 //https://www.toptal.com/spring/spring-security-tutorial
