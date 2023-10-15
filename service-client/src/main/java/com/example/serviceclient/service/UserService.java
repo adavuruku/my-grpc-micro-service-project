@@ -48,12 +48,10 @@ public class UserService {
 
         CreateUserDtoResponse userDtoResponse = CreateUserDtoResponse.builder()
                 .id(createOrSaveUserResponse.getId()).statusMessage("Successfully Created").build();
-        log.info("Successfully created new user. id: {}", createOrSaveUserResponse.getId());
         return userDtoResponse;
     }
 
     public UserDtoResponse getUser(String id) {
-        log.info("Processing GET request for user id: {}", id);
         GetUserRequest getUserRequest = GetUserRequest.newBuilder().setId(id).build();
         User responseUser;
         try {
@@ -69,12 +67,10 @@ public class UserService {
                 .lastName(responseUser.getLastName())
                 .emailAddress(responseUser.getEmailAddress())
                 .id(responseUser.getId()).build();
-        log.debug("Got response: {}", responseUser.toString());
         return userDtoResponse;
     }
 
     public UserDtoResponse getUserByUserName(String userName) {
-        log.info("Processing GET request for user id: {}", userName);
         GetUserByUserNameRequest getUserByUserNameRequest = GetUserByUserNameRequest.newBuilder().setEmailAddress(userName).build();
         User responseUser;
         try {
@@ -91,7 +87,6 @@ public class UserService {
                 .password(responseUser.getPassword())
                 .emailAddress(responseUser.getEmailAddress())
                 .id(responseUser.getId()).build();
-        log.debug("Got response: {}", responseUser.toString());
         return userDtoResponse;
     }
 }

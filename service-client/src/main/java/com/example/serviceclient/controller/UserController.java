@@ -48,7 +48,7 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<Object> getUser(Principal principal){
-        log.info("Received request for user with id: {}", principal.getName());
+        log.info("Received request for user with user: {}", principal.getName());
         UserDtoResponse userDtoResponse = userClientService.getUserByUserName(principal.getName());
         userDtoResponse.setPassword(null);
         return ResponseEntity.ok(userDtoResponse);
