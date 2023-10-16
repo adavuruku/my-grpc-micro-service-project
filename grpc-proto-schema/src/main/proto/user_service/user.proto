@@ -8,9 +8,8 @@ option java_package = "com.example.user_service";
 //import "google/protobuf/any.proto";
 
 service UserService {
-  rpc getUser(GetUserRequest) returns (User) {}
-  rpc createUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
-  rpc updateUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
+  rpc createUser(CreateUserRequest) returns (CreateUserResponse) {}
+  rpc updateUser(UpdateUserRequest) returns (User) {}
   rpc getUserByUsername(GetUserByUserNameRequest) returns (User) {}
 }
 
@@ -25,11 +24,20 @@ message User {
   string profileImage = 8;
 }
 
-message CreateOrSaveUserRequest {
+message CreateUserRequest {
   User user = 1;
 }
 
-message CreateOrSaveUserResponse{
+message UpdateUserRequest {
+  string firstName = 1;
+  string lastName = 2;
+  string phoneNumber = 3;
+  string contactAddress = 4;
+  string profileImage = 5;
+  string emailAddress = 6;
+}
+
+message CreateUserResponse{
   string id = 1;
   string statusMessage = 2;
 }

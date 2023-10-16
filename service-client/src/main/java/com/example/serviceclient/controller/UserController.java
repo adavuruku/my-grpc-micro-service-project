@@ -2,6 +2,7 @@ package com.example.serviceclient.controller;
 
 import com.example.serviceclient.dto.request.CreateUserDtoRequest;
 import com.example.serviceclient.dto.request.LoginRequestDto;
+import com.example.serviceclient.dto.request.UpdateUserDtoRequest;
 import com.example.serviceclient.dto.response.CreateUserDtoResponse;
 import com.example.serviceclient.dto.response.FileResponse;
 import com.example.serviceclient.dto.response.LoginResponseDto;
@@ -69,7 +70,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/signin", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> userLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<LoginResponseDto> userLogin(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getEmailAddress(), loginRequestDto.getPassword()));
 
@@ -83,11 +84,6 @@ public class UserController {
         UserDtoResponse userDtoResponse =  userClientService.getUserByUserName(userDetails.getUsername());
         LoginResponseDto loginResponseDto = LoginResponseDto.build(userDtoResponse, jwt);
         loginResponseDto.setToken(jwt);
-//                .builder()
-//                .token(jwt).firstName(userDtoResponse.getFirstName()).lastName(userDtoResponse.getLastName())
-//                .contactAddress(userDtoResponse.getContactAddress())
-//                .emailAddress(userDtoResponse.getEmailAddress()).phoneNumber(userDtoResponse.getPhoneNumber())
-//                .id(userDtoResponse.getId()).build();
         return ResponseEntity.ok(loginResponseDto);
     }
 
@@ -96,5 +92,13 @@ public class UserController {
                                                    Authentication authentication) throws IOException {
         FileResponse fileResponse = fileService.uploadFile(file);
         return new ResponseEntity<>(fileResponse, HttpStatus.CREATED);
+    }
+
+    @PatchMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<LoginResponseDto> updateUser( @Valid @RequestBody() UpdateUserDtoRequest updateUserDtoRequest,
+                                                        Principal principal){
+        UserDtoResponse response = userClientService.updateUser(updateUserDtoRequest, principal.getName());
+        LoginResponseDto loginResponseDto = LoginResponseDto.build(response, null);
+        return ResponseEntity.ok(loginResponseDto);
     }
 }

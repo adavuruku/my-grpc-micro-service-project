@@ -20,6 +20,7 @@ public class FileResponse{
     private Long bytes;
     private Long width;
     private Long height;
+    public FileResponse(){}
 
     public static FileResponse build(Map uploadResult){
 
