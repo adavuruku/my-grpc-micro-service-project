@@ -39,6 +39,7 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .lastName(userRequest.getLastName())
                     .phoneNumber(userRequest.getPhoneNumber())
                     .password(userRequest.getPassword())
+                    .profileImage(userRequest.getProfileImage())
                     .contactAddress(userRequest.getContactAddress())
                     .build();
             UserSchema userDto = usersRepository.save(userSchema);
@@ -66,6 +67,7 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .setContactAddress(data.getContactAddress())
                     .setFirstName(data.getFirstName())
                     .setLastName(data.getLastName())
+                    .setProfileImage(data.getProfileImage())
                     .setPhoneNumber(data.getPhoneNumber()).build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +92,7 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .setFirstName(data.getFirstName())
                     .setLastName(data.getLastName())
                     .setPassword(data.getPassword())
+                    .setProfileImage(data.getProfileImage())
                     .setPhoneNumber(data.getPhoneNumber()).build();
         } catch (Exception e) {
             e.printStackTrace();

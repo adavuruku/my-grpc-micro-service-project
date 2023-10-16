@@ -3,10 +3,12 @@ package com.example.serviceclient.controller;
 import com.example.serviceclient.dto.request.CreateUserDtoRequest;
 import com.example.serviceclient.dto.request.LoginRequestDto;
 import com.example.serviceclient.dto.response.CreateUserDtoResponse;
+import com.example.serviceclient.dto.response.FileResponse;
 import com.example.serviceclient.dto.response.LoginResponseDto;
 import com.example.serviceclient.dto.response.UserDtoResponse;
 import com.example.serviceclient.security.JwtUtils;
 import com.example.serviceclient.security.UserInfoDetails;
+import com.example.serviceclient.service.FileService;
 import com.example.serviceclient.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,6 +43,9 @@ public class UserController {
 
     @Autowired
     UserService userClientService;
+
+    @Autowired
+    FileService fileService;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -74,11 +81,20 @@ public class UserController {
 //                .map(item -> item.getAuthority())
 //                .collect(Collectors.toList());
         UserDtoResponse userDtoResponse =  userClientService.getUserByUserName(userDetails.getUsername());
-        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                .token(jwt).firstName(userDtoResponse.getFirstName()).lastName(userDtoResponse.getLastName())
-                .contactAddress(userDtoResponse.getContactAddress())
-                .emailAddress(userDtoResponse.getEmailAddress()).phoneNumber(userDtoResponse.getPhoneNumber())
-                .id(userDtoResponse.getId()).build();
+        LoginResponseDto loginResponseDto = LoginResponseDto.build(userDtoResponse, jwt);
+        loginResponseDto.setToken(jwt);
+//                .builder()
+//                .token(jwt).firstName(userDtoResponse.getFirstName()).lastName(userDtoResponse.getLastName())
+//                .contactAddress(userDtoResponse.getContactAddress())
+//                .emailAddress(userDtoResponse.getEmailAddress()).phoneNumber(userDtoResponse.getPhoneNumber())
+//                .id(userDtoResponse.getId()).build();
         return ResponseEntity.ok(loginResponseDto);
+    }
+
+    @PostMapping("/upload/image")
+    public ResponseEntity<FileResponse> fileUpload(@RequestParam("file") MultipartFile file,
+                                                   Authentication authentication) throws IOException {
+        FileResponse fileResponse = fileService.uploadFile(file);
+        return new ResponseEntity<>(fileResponse, HttpStatus.CREATED);
     }
 }

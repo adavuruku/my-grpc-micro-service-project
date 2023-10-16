@@ -8,6 +8,16 @@ grpc:
       negotiationType: plainText
 server:
   port: 8081
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 security-jwt-config:
   jwtExpirationMs: 86400000
   jwtSecret: encryptoWearMyWorstAreaIsChoosingASecretAndWellEnough!@
+file-server:
+  cloudinary:
+    api-key: 813943829169579
+    api-secret: xADVTKxM0bwPV2BOEVQxCtoq5Kw
+    cloud-name: adavuruku
+

@@ -1,5 +1,6 @@
 package com.example.serviceclient.dto.request;
 
+import com.example.serviceclient.dto.response.FileResponse;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,8 @@ public class CreateUserDtoRequest {
     @NotBlank(message = "Password cannot be blank")
     @MinLen(6)
     private String password;
+
+    private FileResponse profileImage;
 
     @NotEmpty(message = "Contact address cannot be empty")
     @NotBlank(message = "Contact address cannot be blank")

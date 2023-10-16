@@ -12,6 +12,7 @@ public class UserDtoResponse {
     private String lastName;
     private String phoneNumber;
     private String id;
+    private FileResponse profileImage;
     private String contactAddress;
     private String emailAddress;
     private String password;

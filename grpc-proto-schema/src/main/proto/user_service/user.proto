@@ -5,11 +5,12 @@ package user_service;
 option java_multiple_files = true;
 option java_package = "com.example.user_service";
 
+//import "google/protobuf/any.proto";
+
 service UserService {
   rpc getUser(GetUserRequest) returns (User) {}
   rpc createUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
   rpc updateUser(CreateOrSaveUserRequest) returns (CreateOrSaveUserResponse) {}
-  rpc userLogin(UserLoginRequest) returns (UserLoginResponse) {}
   rpc getUserByUsername(GetUserByUserNameRequest) returns (User) {}
 }
 
@@ -21,16 +22,7 @@ message User {
   string password = 5;
   string phoneNumber = 6;
   string contactAddress = 7;
-}
-
-message UserLoginRequest {
-  string emailAddress = 1;
-  string password = 2;
-}
-
-message UserLoginResponse {
-  User user = 1;
-  string token = 2;
+  string profileImage = 8;
 }
 
 message CreateOrSaveUserRequest {
