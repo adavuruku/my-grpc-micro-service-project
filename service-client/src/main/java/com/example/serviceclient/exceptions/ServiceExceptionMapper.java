@@ -18,7 +18,11 @@ public class ServiceExceptionMapper {
 
         var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
 
-        ErrorDetail errorDetail = null;
+        ErrorDetail errorDetail = ErrorDetail.newBuilder()
+                .setErrorCode(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus().toString())
+                .setMessage(ErrorCode.INTERNAL_SERVER_ERROR.getMessage())
+                .putAllMetadata(Map.of())
+                .build();
 
         for (Any any : status.getDetailsList()) {
             if (!any.is(ErrorDetail.class)) {

@@ -37,7 +37,23 @@ public class ExceptionHandler {
         return StatusProto.toStatusRuntimeException(status);
     }
 
-
+    @GrpcExceptionHandler(DuplicateKeyException.class)
+    public StatusRuntimeException handleDuplicateKeyException(DuplicateKeyException error) {
+        var errorMetaData = error.getErrorMetaData();
+        var errorInfo =
+                ErrorDetail.newBuilder()
+                        .setErrorCode(ErrorCode.USER_ALREADY_EXISTS.getShortCode())
+                        .setMessage(error.getMessage())
+                        .putAllMetadata(errorMetaData)
+                        .build();
+        var status =
+                com.google.rpc.Status.newBuilder()
+                        .setCode(Code.ALREADY_EXISTS.getNumber())
+                        .setMessage(ErrorCode.USER_ALREADY_EXISTS.getMessage())
+                        .addDetails(Any.pack(errorInfo))
+                        .build();
+        return StatusProto.toStatusRuntimeException(status);
+    }
 
     @GrpcExceptionHandler(Exception.class)
     public StatusRuntimeException handleAllUncaughtException(Exception error) {

@@ -1,6 +1,9 @@
 package com.example.serviceclient.dto.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,13 +15,26 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 public class FileResponse{
+    @NotEmpty
+    @NotBlank
     private String format;
+    @NotEmpty
+    @NotBlank
     private String resourceType;
+    @NotEmpty
+    @NotBlank
     private String secureUrl;
+    @NotEmpty
+    @NotBlank
     private String createdAt;
+    @NotEmpty
+    @NotBlank
     private String url;
+    @Positive
     private Long bytes;
+    @Positive
     private Long width;
+    @Positive
     private Long height;
     public FileResponse(){}
 

@@ -3,6 +3,7 @@ package com.example.userservice.service;
 import com.example.user_service.*;
 import com.example.userservice.constants.CommonConstants;
 import com.example.userservice.dto.UserDto;
+import com.example.userservice.exceptions.ErrorCode;
 import com.example.userservice.exceptions.ResourceNotFoundException;
 import com.example.userservice.repo.UserRepositoryCollections;
 import com.example.userservice.repo.UsersRepository;
@@ -13,6 +14,7 @@ import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,7 +25,6 @@ import java.util.Optional;
 @Log4j2
 public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
     private final UsersRepository usersRepository;
-    private final UserRepositoryCollections userRepositoryCollections;
 
 //    public UserServerService(UsersRepository usersRepository){
 //        super();
@@ -47,9 +48,13 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
                     .build();
             UserSchema userDto = usersRepository.save(userSchema);
             createOrSaveUserResponse = CreateUserResponse.newBuilder().setId(userDto.getId()).setStatusMessage(CommonConstants.SUCCESSFUL_PUT_MESSAGE).build();
+        } catch (DuplicateKeyException e) {
+//            e.printStackTrace();
+            throw new com.example.userservice.exceptions.DuplicateKeyException(ErrorCode.USER_ALREADY_EXISTS,
+                    ErrorCode.USER_ALREADY_EXISTS.getMessage(), Map.of("Email Addrress: ", userRequest.getEmailAddress(), "message", "User with Email Address: "+userRequest.getEmailAddress()+" already exist"));
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+//            e.printStackTrace();
+            throw e;
         }
         responseObserver.onNext(createOrSaveUserResponse);
         responseObserver.onCompleted();
@@ -88,21 +93,54 @@ public class UserServerService extends UserServiceGrpc.UserServiceImplBase {
             if(data == null ){
                 throw new ResourceNotFoundException("Resource not found.",  Map.of("User name", updateUserRequest.getEmailAddress(), "message", "Resource Not Found"));
             }
-            if(updateUserRequest.getContactAddress() != null){
-                data.setContactAddress(updateUserRequest.getContactAddress());
+            data.setContactAddress(updateUserRequest.getContactAddress());
+            data.setFirstName(updateUserRequest.getFirstName());
+            data.setPhoneNumber(updateUserRequest.getPhoneNumber());
+            data.setLastName(updateUserRequest.getLastName());
+            data.setProfileImage(updateUserRequest.getProfileImage());
+
+//            if(updateUserRequest.getContactAddress() != null){
+//                data.setContactAddress(updateUserRequest.getContactAddress());
+//            }
+//            if(updateUserRequest.getFirstName() != null){
+//                data.setFirstName(updateUserRequest.getFirstName());
+//            }
+//            if(updateUserRequest.getLastName() != null){
+//                data.setLastName(updateUserRequest.getLastName());
+//            }
+//            if(updateUserRequest.getPhoneNumber() != null){
+//                data.setPhoneNumber(updateUserRequest.getPhoneNumber());
+//            }
+//            if(updateUserRequest.getProfileImage() != null){
+//                data.setProfileImage(updateUserRequest.getProfileImage());
+//            }
+            UserSchema userDto = usersRepository.save(data);
+            updateAUserResponse = User.newBuilder().setId(userDto.getId())
+                    .setEmailAddress(userDto.getEmailAddress())
+                    .setContactAddress(userDto.getContactAddress())
+                    .setFirstName(userDto.getFirstName())
+                    .setLastName(userDto.getLastName())
+                    .setPassword(userDto.getPassword())
+                    .setProfileImage(userDto.getProfileImage())
+                    .setPhoneNumber(userDto.getPhoneNumber()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        updateUserResponse.onNext(updateAUserResponse);
+        updateUserResponse.onCompleted();
+    }
+
+    @Override
+    public void updateUserPassword(ChangePasswordRequest changePasswordRequest, StreamObserver<User> updateUserResponse) {
+        User updateAUserResponse = null;
+        try {
+            UserSchema data = usersRepository.findUserByEmailAddress(changePasswordRequest.getEmailAddress());
+            if(data == null ){
+                throw new ResourceNotFoundException("Resource not found.",  Map.of("User name", changePasswordRequest.getEmailAddress(), "message", "Resource Not Found"));
             }
-            if(updateUserRequest.getFirstName() != null){
-                data.setFirstName(updateUserRequest.getFirstName());
-            }
-            if(updateUserRequest.getLastName() != null){
-                data.setLastName(updateUserRequest.getLastName());
-            }
-            if(updateUserRequest.getPhoneNumber() != null){
-                data.setPhoneNumber(updateUserRequest.getPhoneNumber());
-            }
-            if(updateUserRequest.getProfileImage() != null){
-                data.setProfileImage(updateUserRequest.getProfileImage());
-            }
+            data.setPassword(changePasswordRequest.getPassword());
+
             UserSchema userDto = usersRepository.save(data);
             updateAUserResponse = User.newBuilder().setId(userDto.getId())
                     .setEmailAddress(userDto.getEmailAddress())

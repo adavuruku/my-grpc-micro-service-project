@@ -28,6 +28,7 @@ public class UserRepositoryTemplate {
         Update update = new Update();
         update.set("firstName", "Akhi");
         update.set("lastName", "Akhi");
+
         UpdateResult updateResult =  mongoTemplate.upsert(query, update, UserSchema.class);
         return updateResult.getMatchedCount();
     }

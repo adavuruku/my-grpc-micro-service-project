@@ -12,8 +12,8 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS("UserAlreadyExists", "User already exists",  HttpStatus.CONFLICT),
     BAD_ARGUMENT("BadArgument", "Invalid arguments passed",  HttpStatus.BAD_REQUEST),
     INVALID_OPERATION("InvalidOperation", "Operation not allowed", HttpStatus.PRECONDITION_FAILED),
-    FILE_STORAGE_ERROR("FileStorageException", "Error occurred while creating the file storage directory.", HttpStatus.INTERNAL_SERVER_ERROR),
-    FILE_PARSING_ERROR("FileParsingException", "Error occurred while parsing the file.", HttpStatus.INTERNAL_SERVER_ERROR),
+//    FILE_STORAGE_ERROR("FileStorageException", "Error occurred while creating the file storage directory.", HttpStatus.INTERNAL_SERVER_ERROR),
+//    FILE_PARSING_ERROR("FileParsingException", "Error occurred while parsing the file.", HttpStatus.INTERNAL_SERVER_ERROR),
     INTERNAL_SERVER_ERROR("InternalServerError", "Internal Server Error",  HttpStatus.INTERNAL_SERVER_ERROR);
     private final String shortCode;
 

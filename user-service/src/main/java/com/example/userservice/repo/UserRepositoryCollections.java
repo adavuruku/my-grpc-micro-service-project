@@ -15,17 +15,21 @@ import org.springframework.stereotype.Repository;
 //https://www.baeldung.com/spring-data-mongodb-tutorial
 @Repository
 public class UserRepositoryCollections {
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    private final MongoCollection<Document> mongoCollection;
 
-    public UserRepositoryCollections(MongoCollection<Document> mongoCollection){
-        this.mongoCollection = mongoTemplate.getCollection("users");
+    private MongoTemplate mongoTemplate;
+//    private MongoCollection<Document> mongoCollection =  mongoTemplate.getCollection("users");
+
+//    public UserRepositoryCollections(){
+//        this.mongoCollection =
+//    }
+    private MongoCollection<Document> prepareCollection(){
+        return mongoTemplate.getCollection("users");
     }
     public Object updateUserRecord(String updateFields, String userName){
+        MongoCollection<Document> mongoCollection = prepareCollection();
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.returnDocument(ReturnDocument.AFTER);
-        Document find = new Document("emailAddress",userName );
+        Document find = new Document("emailAddress",userName);
         Document parse = Document.parse(updateFields);
         Document update = new Document("$set",parse );
         return mongoCollection.findOneAndUpdate(find, update, options);
