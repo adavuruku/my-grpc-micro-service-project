@@ -1,6 +1,7 @@
 package com.example.bookservice.schema;
 
 import com.example.book_service.Book;
+import com.example.book_service.BookImage;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class BookSchema {
     private String isbn;
     private List<BookImageSchema> bookImages;
 
-    public static BookSchema createSchema(Book bookRequest){
+    public static BookSchema convertBookProtoToBookSchema(Book bookRequest, List<BookImageSchema> bookImageSchemaList){
         return BookSchema.builder()
                 .title(bookRequest.getTitle())
                 .description(bookRequest.getDescription())
@@ -37,8 +38,25 @@ public class BookSchema {
                 .quantity(bookRequest.getQuantity())
                 .bookSlug(bookRequest.getBookSlug())
                 .isbn(bookRequest.getIsbn())
+                .bookImages(bookImageSchemaList)
                 .createdAt(bookRequest.getCreatedAt())
                 .createdBy(bookRequest.getCreatedBy())
                 .build();
+    }
+
+    public static Book convertBookSchemaToBookProto(BookSchema bookSchemaDto, List<BookImage> bookImageList){
+        return Book.newBuilder()
+                .setInStock(bookSchemaDto.isInStock())
+                .setQuantity(bookSchemaDto.getQuantity())
+                .setIsbn(bookSchemaDto.getIsbn())
+                .setBookSlug(bookSchemaDto.getBookSlug())
+                .setCreatedBy(bookSchemaDto.getCreatedBy())
+                .setCreatedAt(bookSchemaDto.getCreatedAt())
+                .setDescription(bookSchemaDto.getDescription())
+                .addAllBookImage(bookImageList)
+                .addAllAuthors(bookSchemaDto.getAuthors())
+                .setId(bookSchemaDto.getId())
+                .setTitle(bookSchemaDto.getTitle()).build();
+
     }
 }

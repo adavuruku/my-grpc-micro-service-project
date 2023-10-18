@@ -26,7 +26,7 @@ public class BookImageSchema {
     private Long width;
     private Long height;
 
-    public static List<BookImageSchema> createListOfBookingImage(List<BookImage> bookImageList){
+    public static List<BookImageSchema> createListOfBookingImageSchemaFromBookImageProto(List<BookImage> bookImageList){
         List<BookImageSchema> bookImageSchemaList = new ArrayList<>();
         for(BookImage bookImage : bookImageList){
             BookImageSchema bookImageSchema = BookImageSchema.builder().build();
@@ -40,5 +40,21 @@ public class BookImageSchema {
             bookImageSchemaList.add(bookImageSchema);
         }
         return bookImageSchemaList;
+    }
+
+    public static List<BookImage> createListOfBookImageProtoFromBookingImageSchema(List<BookImageSchema> bookImageSchemaList){
+        List<BookImage> bookImageList = new ArrayList<>();
+        for(BookImageSchema bookImageSchema : bookImageSchemaList){
+            BookImage bookImage = BookImage.newBuilder().build();
+            try {
+                BeanUtils.copyProperties(bookImage, bookImageSchema);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            bookImageList.add(bookImage);
+        }
+        return bookImageList;
     }
 }

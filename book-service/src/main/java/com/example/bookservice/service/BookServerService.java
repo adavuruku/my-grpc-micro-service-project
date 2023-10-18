@@ -26,37 +26,22 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
     public void createBook(CreateBookRequest createBookRequest, StreamObserver<CreateBookResponse> createBookResponseStreamObserver) {
         try {
             Book bookRequest = createBookRequest.getBook();
-            List<BookImageSchema> bookImageSchemaList = new ArrayList<>();
-
-            for(BookImage bookImage : bookRequest.getBookImageList()){
-                BookImageSchema bookImageSchema = BookImageSchema.builder().build();
-                BeanUtils.copyProperties(bookImageSchema, bookImage);
-                bookImageSchemaList.add(bookImageSchema);
-            }
-            BookSchema bookSchema = BookSchema.createSchema(bookRequest);
-            bookSchema.setBookImages(bookImageSchemaList);
-
+            //1. Convert all proto schemas or java pojo and save
+            List<BookImageSchema> bookImageSchemaList = BookImageSchema.createListOfBookingImageSchemaFromBookImageProto(bookRequest.getBookImageList());
+            BookSchema bookSchema = BookSchema.convertBookProtoToBookSchema(bookRequest, bookImageSchemaList);
             BookSchema bookSchemaDto = booksRepository.save(bookSchema);
-            Book newBook = Book.newBuilder()
-                    .setInStock(bookSchemaDto.isInStock())
-                    .setQuantity(bookSchemaDto.getQuantity())
-                    .setIsbn(bookSchemaDto.getIsbn())
-                    .setBookSlug(bookSchemaDto.getBookSlug())
-                    .setCreatedBy(bookSchemaDto.getCreatedBy())
-                    .setCreatedAt(bookSchemaDto.getCreatedAt())
-                    .setDescription(bookSchemaDto.getDescription())
-                    .addAllBookImage(bookRequest.getBookImageList())
-                    .addAllAuthors(bookSchemaDto.getAuthors())
-                    .setId(bookSchemaDto.getId())
-                    .setTitle(bookSchemaDto.getTitle()).build();
+
+            //1. Convert all pojo or schemas to proto file and transmit to client
+            List<BookImage> bookImageList = BookImageSchema.createListOfBookImageProtoFromBookingImageSchema(bookSchemaDto.getBookImages());
+            Book newBook = BookSchema.convertBookSchemaToBookProto(bookSchemaDto, bookImageList);
             CreateBookResponse createBookResponse = CreateBookResponse.newBuilder().setBook(newBook).build();
+
             createBookResponseStreamObserver.onNext(createBookResponse);
             createBookResponseStreamObserver.onCompleted();
+
         } catch (DuplicateKeyException e) {
             throw new com.example.bookservice.exceptions.DuplicateKeyException(ErrorCode.USER_ALREADY_EXISTS,
                     ErrorCode.USER_ALREADY_EXISTS.getMessage(), Map.of( "message", "Book with title: "+createBookRequest.getBook().getTitle()+" already exist"));
-        } catch (InvocationTargetException | IllegalAccessException ex) {
-            throw new RuntimeException(ex);
         } catch (Exception e) {
             throw e;
         }
