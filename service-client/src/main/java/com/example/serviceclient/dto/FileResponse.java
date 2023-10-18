@@ -82,6 +82,24 @@ public class FileResponse{
                 .build();
     }
 
+    public static List<FileResponse> fromListOfFileResponseProtoToListOfFileResponsePojo(List<BookImage> bookImageList){
+        List<FileResponse> fileResponseList = new ArrayList<>();
+        for(BookImage bookImage: bookImageList){
+            FileResponse fileData =  FileResponse.builder()
+                    .createdAt(bookImage.getCreatedAt())
+                    .secureUrl(bookImage.getSecureUrl())
+                    .height(bookImage.getHeight())
+                    .bytes(bookImage.getBytes())
+                    .format(bookImage.getFormat())
+                    .resourceType(bookImage.getResourceType())
+                    .width(bookImage.getWidth())
+                    .url(bookImage.getUrl())
+                    .build();
+            fileResponseList.add(fileData);
+        }
+        return fileResponseList;
+    }
+
     public static BookImage fromPojoToProto(FileResponse fileResponse){
         return BookImage.newBuilder()
                 .setCreatedAt(fileResponse.getCreatedAt())
@@ -93,6 +111,24 @@ public class FileResponse{
                 .setWidth(fileResponse.getWidth())
                 .setUrl(fileResponse.getUrl())
                 .build();
+    }
+
+    public static List<BookImage> fromListOfFileResponsePojoToListOfFileResponseProto(List<FileResponse> fileResponseList){
+        List<BookImage> bookImageList = new ArrayList<>();
+        for(FileResponse fileResponse: fileResponseList){
+            BookImage bookImage = BookImage.newBuilder()
+                    .setCreatedAt(fileResponse.getCreatedAt())
+                    .setSecureUrl(fileResponse.getSecureUrl())
+                    .setHeight(fileResponse.getHeight())
+                    .setBytes(fileResponse.getBytes())
+                    .setFormat(fileResponse.getFormat())
+                    .setResourceType(fileResponse.getResourceType())
+                    .setWidth(fileResponse.getWidth())
+                    .setUrl(fileResponse.getUrl())
+                    .build();
+            bookImageList.add(bookImage);
+        }
+        return bookImageList;
     }
 
 }

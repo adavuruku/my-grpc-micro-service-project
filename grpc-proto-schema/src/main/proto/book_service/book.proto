@@ -10,6 +10,10 @@ service BookService {
   rpc openBook(OpenBookRequest) returns (Book) {}
   rpc deleteBook(OpenBookRequest) returns (DeleteBookResponse) {}
   rpc listBooks(ListBookRequest) returns (ListBookResponse) {}
+
+  rpc deleteCart(DeleteCartRequest) returns (DeleteCartResponse) {}
+  rpc addCart(AddCartRequest) returns (Cart) {}
+  rpc listCarts(ListCartRequest) returns (ListCartResponse) {}
 }
 
 message BookImage {
@@ -23,6 +27,37 @@ message BookImage {
   int64 height = 8;
 }
 
+message Cart {
+  string id = 1;
+  Book book = 2;
+  string createdAt = 3;
+  string createdBy = 4;
+  int64 quantity = 5;
+}
+
+message AddCartRequest {
+  string bookId = 1;
+  string userName = 2;
+  int64 quantity = 3;
+}
+
+message DeleteCartRequest {
+  string cartId = 1;
+  string userName = 2;
+}
+message DeleteCartResponse{
+  string id = 1;
+  string statusMessage = 2;
+}
+message ListCartResponse{
+    repeated Cart carts = 1;
+    Pagination pagination = 2;
+}
+message ListCartRequest{
+    string userName = 1;
+    int32 page = 2;
+    int32 perPage = 3;
+}
 message Book {
   string id = 1;
   string title = 2;
@@ -35,6 +70,7 @@ message Book {
   string bookSlug = 9;
   string isbn = 10;
   repeated BookImage bookImage = 11;
+  bool isDeleted = 12;
 }
 
 message CreateBookRequest {
@@ -49,8 +85,17 @@ message OpenBookRequest{
     string searchCriteria = 1;
 }
 
+message Pagination{
+    bool hasPrevious = 1;
+    bool hasNext = 2;
+    int64 totalPage = 3;
+    int64 currentPage = 4;
+    int64 totalItem = 5;
+    int64 perPage = 6;
+}
 message ListBookResponse{
     repeated Book book = 1;
+    Pagination pagination = 2;
 }
 
 message DeleteBookResponse{

@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> create( @RequestBody @Valid CreateUserDtoRequest createUserDtoRequest){
+    public ResponseEntity<Object> createUser( @RequestBody @Valid CreateUserDtoRequest createUserDtoRequest){
         log.info("Received PUT request for user with id: {}", createUserDtoRequest.getFirstName());
         CreateUserDtoResponse response = userClientService.createUser(createUserDtoRequest);
         return ResponseEntity.created(URI.create(String.format("/grpc/users/%s", response.getId()))).body(response);
