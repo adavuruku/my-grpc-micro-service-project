@@ -35,16 +35,7 @@ public class BookService {
         try {
             List<BookImage> bookImages = new ArrayList<>();
             for(FileResponse fileResponse : createBookDtoRequest.getBookImages()){
-                BookImage bookImage = BookImage.newBuilder()
-                        .setCreatedAt(fileResponse.getCreatedAt())
-                        .setSecureUrl(fileResponse.getSecureUrl())
-                        .setHeight(fileResponse.getHeight())
-                        .setBytes(fileResponse.getBytes())
-                        .setFormat(fileResponse.getFormat())
-                        .setResourceType(fileResponse.getResourceType())
-                        .setWidth(fileResponse.getWidth())
-                        .setUrl(fileResponse.getUrl())
-                        .build();
+                BookImage bookImage = FileResponse.fromPojoToProto(fileResponse);
                 bookImages.add(bookImage);
             }
 
@@ -65,44 +56,23 @@ public class BookService {
             CreateBookRequest createBookRequest = CreateBookRequest.newBuilder().setBook(book).build();
             CreateBookResponse createBookResponse = synchronousClient.createBook(createBookRequest);
 
+            //process response from server
             book = createBookResponse.getBook();
-
             List<FileResponse> fileResponseList = new ArrayList<>();
             for(BookImage bookImage : book.getBookImageList()){
-                FileResponse fileResponse = FileResponse.builder()
-                        .createdAt(bookImage.getCreatedAt())
-                        .secureUrl(bookImage.getSecureUrl())
-                        .height(bookImage.getHeight())
-                        .bytes(bookImage.getBytes())
-                        .format(bookImage.getFormat())
-                        .resourceType(bookImage.getResourceType())
-                        .width(bookImage.getWidth())
-                        .url(bookImage.getUrl())
-                        .build();
+                FileResponse fileResponse = FileResponse.fromProtoToPojo(bookImage);
                 fileResponseList.add(fileResponse);
             }
 
-            CreateBookDtoResponse createBookDtoResponse = CreateBookDtoResponse.builder()
-                    .title(book.getTitle())
-                    .description(book.getDescription())
-                    .authors(book.getAuthorsList())
-                    .bookImages(fileResponseList)
-                    .quantity(book.getQuantity())
-                    .bookSlug(book.getBookSlug())
-                    .isbn(book.getIsbn())
-                    .createdAt(book.getCreatedAt())
-                    .createdBy(book.getCreatedBy()).build();
+            CreateBookDtoResponse createBookDtoResponse = CreateBookDtoResponse.fromProtoToObject(book);
+            createBookDtoResponse.setBookImages(fileResponseList);
 
-//            BeanUtils.copyProperties(createBookDtoResponse, createBookResponse.getBook());
             return createBookDtoResponse;
         } catch (StatusRuntimeException error) {
             var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
             log.error("Error reason {}", status.getMessage());
             throw ServiceExceptionMapper.map(error);
         }
-//        catch (IllegalAccessException | InvocationTargetException error) {
-//            throw new RuntimeException(error);
-//        }
     }
 
     public String createSlug(String title){

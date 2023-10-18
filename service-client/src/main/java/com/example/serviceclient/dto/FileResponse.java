@@ -1,5 +1,6 @@
 package com.example.serviceclient.dto;
 
+import com.example.book_service.BookImage;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -62,6 +65,33 @@ public class FileResponse{
                 .bytes(Long.parseLong(jsonNode.get("bytes").toString()))
                 .width(Long.parseLong(jsonNode.get("width").toString()))
                 .height(Long.parseLong(jsonNode.get("height").toString()))
+                .build();
+    }
+
+    public static FileResponse fromProtoToPojo(BookImage bookImage){
+
+        return FileResponse.builder()
+                .createdAt(bookImage.getCreatedAt())
+                .secureUrl(bookImage.getSecureUrl())
+                .height(bookImage.getHeight())
+                .bytes(bookImage.getBytes())
+                .format(bookImage.getFormat())
+                .resourceType(bookImage.getResourceType())
+                .width(bookImage.getWidth())
+                .url(bookImage.getUrl())
+                .build();
+    }
+
+    public static BookImage fromPojoToProto(FileResponse fileResponse){
+        return BookImage.newBuilder()
+                .setCreatedAt(fileResponse.getCreatedAt())
+                .setSecureUrl(fileResponse.getSecureUrl())
+                .setHeight(fileResponse.getHeight())
+                .setBytes(fileResponse.getBytes())
+                .setFormat(fileResponse.getFormat())
+                .setResourceType(fileResponse.getResourceType())
+                .setWidth(fileResponse.getWidth())
+                .setUrl(fileResponse.getUrl())
                 .build();
     }
 

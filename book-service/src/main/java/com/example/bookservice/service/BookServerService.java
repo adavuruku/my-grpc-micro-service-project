@@ -27,25 +27,16 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
         try {
             Book bookRequest = createBookRequest.getBook();
             List<BookImageSchema> bookImageSchemaList = new ArrayList<>();
+
             for(BookImage bookImage : bookRequest.getBookImageList()){
                 BookImageSchema bookImageSchema = BookImageSchema.builder().build();
                 BeanUtils.copyProperties(bookImageSchema, bookImage);
                 bookImageSchemaList.add(bookImageSchema);
             }
-             BookSchema bookSchema = BookSchema.builder()
-                    .title(bookRequest.getTitle())
-                    .description(bookRequest.getDescription())
-                    .authors(bookRequest.getAuthorsList())
-                    .bookImages(bookImageSchemaList)
-                    .quantity(bookRequest.getQuantity())
-                     .bookSlug(bookRequest.getBookSlug())
-                    .isbn(bookRequest.getIsbn())
-                     .createdAt(bookRequest.getCreatedAt())
-                     .createdBy(bookRequest.getCreatedBy())
-                    .build();
+            BookSchema bookSchema = BookSchema.createSchema(bookRequest);
+            bookSchema.setBookImages(bookImageSchemaList);
 
             BookSchema bookSchemaDto = booksRepository.save(bookSchema);
-            log.info("{}", bookSchemaDto);
             Book newBook = Book.newBuilder()
                     .setInStock(bookSchemaDto.isInStock())
                     .setQuantity(bookSchemaDto.getQuantity())
@@ -58,8 +49,6 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
                     .addAllAuthors(bookSchemaDto.getAuthors())
                     .setId(bookSchemaDto.getId())
                     .setTitle(bookSchemaDto.getTitle()).build();
-            log.info("newBook {}", newBook);
-//            BeanUtils.copyProperties(newBook, bookSchemaDto);
             CreateBookResponse createBookResponse = CreateBookResponse.newBuilder().setBook(newBook).build();
             createBookResponseStreamObserver.onNext(createBookResponse);
             createBookResponseStreamObserver.onCompleted();

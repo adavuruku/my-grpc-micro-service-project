@@ -1,5 +1,6 @@
 package com.example.bookservice.schema;
 
+import com.example.book_service.Book;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,16 @@ public class BookSchema {
     private String isbn;
     private List<BookImageSchema> bookImages;
 
+    public static BookSchema createSchema(Book bookRequest){
+        return BookSchema.builder()
+                .title(bookRequest.getTitle())
+                .description(bookRequest.getDescription())
+                .authors(bookRequest.getAuthorsList())
+                .quantity(bookRequest.getQuantity())
+                .bookSlug(bookRequest.getBookSlug())
+                .isbn(bookRequest.getIsbn())
+                .createdAt(bookRequest.getCreatedAt())
+                .createdBy(bookRequest.getCreatedBy())
+                .build();
+    }
 }

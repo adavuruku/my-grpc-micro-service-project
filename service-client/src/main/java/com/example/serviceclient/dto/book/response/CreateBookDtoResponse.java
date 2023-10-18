@@ -1,5 +1,6 @@
 package com.example.serviceclient.dto.book.response;
 
+import com.example.book_service.Book;
 import com.example.serviceclient.dto.FileResponse;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -22,4 +23,16 @@ public class CreateBookDtoResponse {
     private String createdBy;
     private String createdAt;
     private List<FileResponse> bookImages;
+
+    public static CreateBookDtoResponse fromProtoToObject(Book book){
+        return CreateBookDtoResponse.builder()
+                .title(book.getTitle())
+                .description(book.getDescription())
+                .authors(book.getAuthorsList())
+                .quantity(book.getQuantity())
+                .bookSlug(book.getBookSlug())
+                .isbn(book.getIsbn())
+                .createdAt(book.getCreatedAt())
+                .createdBy(book.getCreatedBy()).build();
+    }
 }
