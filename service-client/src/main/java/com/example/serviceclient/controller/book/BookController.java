@@ -43,14 +43,14 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value="/delete/:searchCriteria", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<DeleteDtoResponse> deleteBook(@PathParam("searchCriteria") @NotBlank @NotEmpty String searchCriteria){
+    @DeleteMapping(value="/delete/{searchCriteria}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<DeleteDtoResponse> deleteBook(@PathVariable("searchCriteria") @NotBlank @NotEmpty String searchCriteria, Principal principal){
         DeleteDtoResponse response = bookClientService.deleteABook(searchCriteria);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value="/open/:searchCriteria", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CreateBookDtoResponse> openBook(@PathParam("searchCriteria") @NotBlank @NotEmpty String searchCriteria){
+    @GetMapping(value="/open/{searchCriteria}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CreateBookDtoResponse> openBook(@PathVariable("searchCriteria") @NotBlank @NotEmpty String searchCriteria){
         CreateBookDtoResponse response = bookClientService.openABook(searchCriteria);
         return ResponseEntity.ok(response);
     }
@@ -68,8 +68,8 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value="/carts/delete/:cartId", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<DeleteDtoResponse>   addCards(@PathParam("cartId") @NotBlank @NotEmpty String cartId, Principal principal){
+    @DeleteMapping(value="/carts/delete/{cartId}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<DeleteDtoResponse>   addCards(@PathVariable("cartId") @NotBlank @NotEmpty String cartId, Principal principal){
         DeleteDtoResponse response = bookClientService.deleteACart(cartId, principal.getName());
         return ResponseEntity.ok(response);
     }
@@ -78,7 +78,7 @@ public class BookController {
      * To Do
      * Update books (title, author, picture, quantity, price, inStock, description)
      * Update cart(quantity)
-     * 
+     *
      * OrderItems (id, orderId, book, quantity, price, discount, total, createdBy) create
      * Payment (id, orderId, createdAt, createdBy, deliveryAddress, paymentMethod, deliveryStatus) list
      * DeliveryAddress (createdBy, state, localGov, address, otherInfo, isDeleted) add/delete/list

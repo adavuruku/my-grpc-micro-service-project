@@ -79,7 +79,9 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
 
     public void openBook(OpenBookRequest openBookRequest, StreamObserver<Book> bookStreamObserver) {
         try{
-            Optional<BookSchema> bookSchema = booksRepository.findByIdOrBookSlug(openBookRequest.getSearchCriteria());
+            Optional<BookSchema> bookSchema = booksRepository.findByIdOrBookSlug(
+                    openBookRequest.getSearchCriteria(),openBookRequest.getSearchCriteria()
+            );
             if(bookSchema.isEmpty()){
                 throw new ResourceNotFoundException("Resource not found.",  Map.of("Book with Id or slug: ", openBookRequest.getSearchCriteria(), "message", "Resource Not Found"));
             }
@@ -90,6 +92,7 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
             bookStreamObserver.onCompleted();
 
         }catch (Exception e) {
+            log.info("{}", e);
             throw e;
         }
     }
@@ -97,12 +100,15 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
     public void deleteBook(OpenBookRequest openBookRequest, StreamObserver<DeleteBookResponse> deleteBookResponseStreamObserver) {
         try{
 
-            Optional<BookSchema> bookSchema = booksRepository.findByIdOrBookSlug(openBookRequest.getSearchCriteria());
+            Optional<BookSchema> bookSchema = booksRepository.findByIdOrBookSlug(
+                    openBookRequest.getSearchCriteria(), openBookRequest.getSearchCriteria()
+            );
             if(bookSchema.isEmpty()){
                 throw new ResourceNotFoundException("Resource not found.",  Map.of("Book with Id or slug: ", openBookRequest.getSearchCriteria(), "message", "Resource Not Found"));
             }
             BookSchema bookSchemaItem = bookSchema.get();
-            booksRepository.delete(bookSchemaItem);
+            bookSchemaItem.setDeleted(true);
+            booksRepository.save(bookSchemaItem);
             //2. Convert schemas to proto for data transport
             DeleteBookResponse deleteRecord = DeleteBookResponse.newBuilder()
                     .setId(bookSchemaItem.getId()).setStatusMessage("Book successfully Deleted.").build();
