@@ -1,9 +1,8 @@
-package com.example.serviceclient.dto.response;
+package com.example.serviceclient.dto.user.response;
 
+import com.example.serviceclient.dto.FileResponse;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Map;
 
 @Data
 @Builder

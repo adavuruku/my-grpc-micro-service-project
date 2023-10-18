@@ -1,4 +1,4 @@
-package com.example.serviceclient.dto.response;
+package com.example.serviceclient.dto.user.response;
 
 import lombok.Builder;
 import lombok.Data;

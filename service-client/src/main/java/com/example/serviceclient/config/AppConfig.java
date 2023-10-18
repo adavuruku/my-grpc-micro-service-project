@@ -1,9 +1,11 @@
 package com.example.serviceclient.config;
 
 import com.cloudinary.Cloudinary;
+import com.example.book_service.BookServiceGrpc;
 import com.example.serviceclient.security.UserInfoSecurityService;
 import com.example.serviceclient.service.FileService;
-import com.example.serviceclient.service.UserService;
+import com.example.serviceclient.service.book.BookService;
+import com.example.serviceclient.service.user.UserService;
 import com.example.user_service.UserServiceGrpc;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,11 @@ public class AppConfig {
     public UserService createUserService(@GrpcClient("user-service") UserServiceGrpc.UserServiceBlockingStub synchronousClient,
     PasswordEncoder encoder){
         return new UserService(synchronousClient, encoder);
+    }
+
+    @Bean
+    public BookService createBookService(@GrpcClient("book-service") BookServiceGrpc.BookServiceBlockingStub synchronousClient){
+        return new BookService(synchronousClient);
     }
 
     @Bean

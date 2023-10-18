@@ -1,6 +1,6 @@
 package com.example.serviceclient.security;
 
-import com.example.serviceclient.dto.response.UserDtoResponse;
+import com.example.serviceclient.dto.user.response.UserDtoResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

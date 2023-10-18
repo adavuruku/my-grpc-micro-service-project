@@ -1,11 +1,11 @@
-package com.example.serviceclient.service;
+package com.example.serviceclient.service.user;
 
-import com.example.serviceclient.dto.request.CreateUserDtoRequest;
-import com.example.serviceclient.dto.request.UpdatePasswordDtoRequest;
-import com.example.serviceclient.dto.request.UpdateUserDtoRequest;
-import com.example.serviceclient.dto.response.CreateUserDtoResponse;
-import com.example.serviceclient.dto.response.FileResponse;
-import com.example.serviceclient.dto.response.UserDtoResponse;
+import com.example.serviceclient.dto.user.request.CreateUserDtoRequest;
+import com.example.serviceclient.dto.user.request.UpdatePasswordDtoRequest;
+import com.example.serviceclient.dto.user.request.UpdateUserDtoRequest;
+import com.example.serviceclient.dto.user.response.CreateUserDtoResponse;
+import com.example.serviceclient.dto.FileResponse;
+import com.example.serviceclient.dto.user.response.UserDtoResponse;
 import com.example.serviceclient.exceptions.ErrorCode;
 import com.example.serviceclient.exceptions.PasswordMissMatchException;
 import com.example.serviceclient.exceptions.ServiceExceptionMapper;
@@ -137,7 +137,7 @@ public class UserService {
     public FileResponse convertStringToFileResponse(String profileImage){
         FileResponse profileImageUrl = null;
         try {
-            if(profileImage != null){
+            if(profileImage != null && profileImage !=""){
 //                JsonNode nodeJson = OBJECT_MAPPER.readValue(profileImage, JsonNode.class);
                 profileImageUrl = OBJECT_MAPPER.readValue(profileImage, FileResponse.class);
             }
@@ -150,7 +150,7 @@ public class UserService {
 
 
     public String convertFileResponseToString(FileResponse profileImage){
-        String profileImageString = null;
+        String profileImageString = "";
         try {
             if(profileImage != null){
                 profileImageString = OBJECT_MAPPER.writeValueAsString(profileImage);

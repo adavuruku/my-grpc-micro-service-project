@@ -1,17 +1,17 @@
-package com.example.serviceclient.controller;
+package com.example.serviceclient.controller.user;
 
-import com.example.serviceclient.dto.request.CreateUserDtoRequest;
-import com.example.serviceclient.dto.request.LoginRequestDto;
-import com.example.serviceclient.dto.request.UpdatePasswordDtoRequest;
-import com.example.serviceclient.dto.request.UpdateUserDtoRequest;
-import com.example.serviceclient.dto.response.CreateUserDtoResponse;
-import com.example.serviceclient.dto.response.FileResponse;
-import com.example.serviceclient.dto.response.LoginResponseDto;
-import com.example.serviceclient.dto.response.UserDtoResponse;
+import com.example.serviceclient.dto.user.request.CreateUserDtoRequest;
+import com.example.serviceclient.dto.user.request.LoginRequestDto;
+import com.example.serviceclient.dto.user.request.UpdatePasswordDtoRequest;
+import com.example.serviceclient.dto.user.request.UpdateUserDtoRequest;
+import com.example.serviceclient.dto.user.response.CreateUserDtoResponse;
+import com.example.serviceclient.dto.FileResponse;
+import com.example.serviceclient.dto.user.response.LoginResponseDto;
+import com.example.serviceclient.dto.user.response.UserDtoResponse;
 import com.example.serviceclient.security.JwtUtils;
 import com.example.serviceclient.security.UserInfoDetails;
 import com.example.serviceclient.service.FileService;
-import com.example.serviceclient.service.UserService;
+import com.example.serviceclient.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -55,12 +55,3 @@ message GetUserRequest {
 message GetUserByUserNameRequest {
   string emailAddress = 1;
 }
-
-message ErrorDetail {
-  // Error code
-  string errorCode = 1;
-  //Error message
-  string message = 2;
-  // Additional metadata associated with the Error
-  map<string, string> metadata = 3;
-}

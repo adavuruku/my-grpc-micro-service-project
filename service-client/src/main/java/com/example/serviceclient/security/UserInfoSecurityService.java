@@ -1,13 +1,10 @@
 package com.example.serviceclient.security;
 
-import com.example.serviceclient.dto.response.UserDtoResponse;
-import com.example.serviceclient.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import com.example.serviceclient.dto.user.response.UserDtoResponse;
+import com.example.serviceclient.service.user.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 public class UserInfoSecurityService implements UserDetailsService {
 

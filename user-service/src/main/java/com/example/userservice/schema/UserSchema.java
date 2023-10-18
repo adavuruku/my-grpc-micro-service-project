@@ -20,7 +20,6 @@ public class UserSchema {
     private String phoneNumber;
     private String password;
     private String profileImage;
-    Map<String, Object> profileImageData;
     @Indexed(unique = true)
     private String emailAddress;
     private String contactAddress;

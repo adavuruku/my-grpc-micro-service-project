@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service_error_details;
+
+option java_multiple_files = true;
+option java_package = "com.example.service_error_details";
+
+message ErrorDetail {
+  // Error code
+  string errorCode = 1;
+  //Error message
+  string message = 2;
+  // Additional metadata associated with the Error
+  map<string, string> metadata = 3;
+}

@@ -2,8 +2,7 @@ package com.example.serviceclient.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.serviceclient.dto.response.FileResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.serviceclient.dto.FileResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;

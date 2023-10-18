@@ -1,6 +1,6 @@
-package com.example.serviceclient.dto.request;
+package com.example.serviceclient.dto.user.request;
 
-import com.example.serviceclient.dto.response.FileResponse;
+import com.example.serviceclient.dto.FileResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -28,7 +28,6 @@ public class UpdateUserDtoRequest {
     @NotBlank(message = "Phone Number cannot be blank")
     private String phoneNumber;
 
-    @NotNull
     @Valid
     private FileResponse profileImage;
 

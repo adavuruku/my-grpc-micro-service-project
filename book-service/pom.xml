@@ -9,43 +9,49 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>service-client</artifactId>
+	<artifactId>book-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>service-client</name>
-	<description>Practical implementation of MicroService using gRpc, Springboot, MongoDB</description>
+	<name>book-service</name>
+	<description>Demo project for Spring Boot</description>
 	<properties>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.devh</groupId>
-			<artifactId>grpc-client-spring-boot-starter</artifactId>
-			<version>2.14.0.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java-util</artifactId>
-			<version>3.21.5</version>
-			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+
+			</exclusions>
 		</dependency>
 		<!--		 this is the dependency pointing to the proto files
-			for a live project, the project need to be package and upload to
-			maven so it can be added here.
-			but this will work on my local machine since I have installed the
-			project. check grpc-proto-schema project to understand how to do this
--->
+                    for a live project, the project need to be package and upload to
+                    maven so it can be added here.
+                    but this will work on my local machine since I have installed the
+                    project. check grpc-proto-schema project to understand how to do this
+        -->
 		<dependency>
 			<groupId>com.example</groupId>
 			<artifactId>grpc-proto-schema</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!--		ends here -->
+
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>3.21.5</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -57,40 +63,20 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-server-spring-boot-starter</artifactId>
+			<version>2.14.0.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.devh/grpc-server-spring-boot-autoconfigure -->
+		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-server-spring-boot-autoconfigure</artifactId>
+			<version>2.14.0.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-<!--		Libraries for jwt implementation -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-<!--		it ends here jwt-->
-		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http44</artifactId>
-			<version>1.17.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.slugify</groupId>
-			<artifactId>slugify</artifactId>
-			<version>3.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -98,7 +84,6 @@
 			<version>1.9.4</version>
 		</dependency>
 	</dependencies>
-
 
 	<build>
 		<plugins>

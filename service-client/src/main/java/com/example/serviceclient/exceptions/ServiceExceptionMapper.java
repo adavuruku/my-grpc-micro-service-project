@@ -1,6 +1,6 @@
 package com.example.serviceclient.exceptions;
 
-import com.example.user_service.ErrorDetail;
+import com.example.service_error_details.ErrorDetail;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.StatusRuntimeException;

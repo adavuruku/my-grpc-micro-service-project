@@ -1,6 +1,6 @@
-package com.example.serviceclient.dto.request;
+package com.example.serviceclient.dto.user.request;
 
-import com.example.serviceclient.dto.response.FileResponse;
+import com.example.serviceclient.dto.FileResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -32,7 +32,6 @@ public class CreateUserDtoRequest {
     @Min(6)
     private String password;
 
-    @NotNull
     @Valid
     private FileResponse profileImage;
 
