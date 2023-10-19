@@ -17,7 +17,7 @@ security-jwt-config:
   jwtSecret: encryptoWearMyWorstAreaIsChoosingASecretAndWellEnough!@
 file-server:
   cloudinary:
-    api-key: 813943829169579
-    api-secret: xADVTKxM0bwPV2BOEVQxCtoq5Kw
-    cloud-name: adavuruku
+    api-key: <api-key>
+    api-secret: <api-secret>
+    cloud-name: <cloud-name>
 
