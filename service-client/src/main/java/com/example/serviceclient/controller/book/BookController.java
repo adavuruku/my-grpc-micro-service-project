@@ -2,6 +2,8 @@ package com.example.serviceclient.controller.book;
 
 import com.example.serviceclient.dto.book.request.AddCartDtoRequest;
 import com.example.serviceclient.dto.book.request.CreateBookDtoRequest;
+import com.example.serviceclient.dto.book.request.UpdateBookDtoRequest;
+import com.example.serviceclient.dto.book.request.UpdateCartDtoRequest;
 import com.example.serviceclient.dto.book.response.*;
 import com.example.serviceclient.service.book.BookService;
 import jakarta.validation.Valid;
@@ -31,8 +33,14 @@ public class BookController {
     BookService bookClientService;
 
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> createBook(@RequestBody @Valid CreateBookDtoRequest createBookDtoRequest, Principal principal){
+    public ResponseEntity<CreateBookDtoResponse> createBook(@RequestBody @Valid CreateBookDtoRequest createBookDtoRequest, Principal principal){
         CreateBookDtoResponse response = bookClientService.createBook(createBookDtoRequest, principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CreateBookDtoResponse> updateBook(@RequestBody @Valid UpdateBookDtoRequest updateBookDtoRequest, Principal principal){
+        CreateBookDtoResponse response = bookClientService.updateBook(updateBookDtoRequest, principal.getName());
         return ResponseEntity.ok(response);
     }
 
@@ -63,12 +71,18 @@ public class BookController {
     }
 
     @PostMapping(value="/carts/add", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<AddCartDtoResponse>   addCards(@RequestBody @Valid AddCartDtoRequest addCartDtoRequest, Principal principal){
+    public ResponseEntity<AddCartDtoResponse>   addCarts(@RequestBody @Valid AddCartDtoRequest addCartDtoRequest, Principal principal){
         AddCartDtoResponse response = bookClientService.addCart(addCartDtoRequest, principal.getName());
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(value="/carts/delete/{cartId}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PatchMapping(value="/carts/update", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<AddCartDtoResponse>   updateCart(@RequestBody @Valid UpdateCartDtoRequest updateCartDtoRequest, Principal principal){
+        AddCartDtoResponse response = bookClientService.updateCart(updateCartDtoRequest, principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping(value="/carts/delete/{cartId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<DeleteDtoResponse>   addCards(@PathVariable("cartId") @NotBlank @NotEmpty String cartId, Principal principal){
         DeleteDtoResponse response = bookClientService.deleteACart(cartId, principal.getName());
         return ResponseEntity.ok(response);
@@ -76,8 +90,6 @@ public class BookController {
 
     /***
      * To Do
-     * Update books (title, author, picture, quantity, price, inStock, description)
-     * Update cart(quantity)
      *
      * OrderItems (id, orderId, book, quantity, price, discount, total, createdBy) create
      * Payment (id, orderId, createdAt, createdBy, deliveryAddress, paymentMethod, deliveryStatus) list

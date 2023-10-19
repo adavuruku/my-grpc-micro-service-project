@@ -17,6 +17,9 @@ public interface BooksRepository extends MongoRepository<BookSchema, String> {
     Optional<BookSchema> findByBookSlug(String bookSlug);
     Optional<BookSchema> findById(String id);
     Optional<BookSchema> findByIdOrBookSlug(String id, String bookSlug);
+    Optional<BookSchema> findByIdAndIsDeleted(String id, boolean isDeleted);
+    Optional<BookSchema> findByIdAndIsDeletedAndCreatedBy(String id, boolean isDeleted,String createdBy);
+
 
     public long count();
 

@@ -5,6 +5,7 @@ import com.example.book_service.BookImage;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Data
 @Document("books")
 @Builder
@@ -23,6 +25,8 @@ public class BookSchema {
     private String description;
     private List<String> authors;
     private Long quantity;
+    private double discount;
+    private double price;
     private boolean inStock;
     private boolean isDeleted;
     private String createdAt;
@@ -33,11 +37,15 @@ public class BookSchema {
     private List<BookImageSchema> bookImages;
 
     public static BookSchema convertBookProtoToBookSchema(Book bookRequest, List<BookImageSchema> bookImageSchemaList){
+//        log.info("{}", bookRequest);
         return BookSchema.builder()
                 .title(bookRequest.getTitle())
                 .description(bookRequest.getDescription())
                 .authors(bookRequest.getAuthorsList())
                 .quantity(bookRequest.getQuantity())
+                .discount(bookRequest.getDiscount())
+                .price(bookRequest.getPrice())
+                .inStock(bookRequest.getInStock())
                 .bookSlug(bookRequest.getBookSlug())
                 .isbn(bookRequest.getIsbn())
                 .bookImages(bookImageSchemaList)
@@ -53,6 +61,8 @@ public class BookSchema {
         return Book.newBuilder()
                 .setInStock(bookSchemaDto.isInStock())
                 .setQuantity(bookSchemaDto.getQuantity())
+                .setDiscount(bookSchemaDto.getDiscount())
+                .setPrice(bookSchemaDto.getPrice())
                 .setIsbn(bookSchemaDto.getIsbn())
                 .setBookSlug(bookSchemaDto.getBookSlug())
                 .setCreatedBy(bookSchemaDto.getCreatedBy())
@@ -77,6 +87,8 @@ public class BookSchema {
                     .setId(bookSchemaDto.getId())
                     .setInStock(bookSchemaDto.isInStock())
                     .setQuantity(bookSchemaDto.getQuantity())
+                    .setDiscount(bookSchemaDto.getDiscount())
+                    .setPrice(bookSchemaDto.getPrice())
                     .setIsbn(bookSchemaDto.getIsbn())
                     .setBookSlug(bookSchemaDto.getBookSlug())
                     .setCreatedBy(bookSchemaDto.getCreatedBy())

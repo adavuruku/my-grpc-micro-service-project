@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import com.github.slugify.Slugify;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -35,7 +36,9 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
             //1. Convert all proto schemas or java pojo and save
             List<BookImageSchema> bookImageSchemaList = BookImageSchema.createListOfBookingImageSchemaFromBookImageProto(bookRequest.getBookImageList());
             BookSchema bookSchema = BookSchema.convertBookProtoToBookSchema(bookRequest, bookImageSchemaList);
-            BookSchema bookSchemaDto = booksRepository.save(bookSchema);
+            BookSchema bookSchemaDtoNew = booksRepository.save(bookSchema);
+            bookSchemaDtoNew.setBookSlug(createSlug(bookSchemaDtoNew.getTitle(), bookSchemaDtoNew.getId()));
+            BookSchema bookSchemaDto = booksRepository.save(bookSchemaDtoNew);
 
             //1. Convert all pojo or schemas to proto file and transmit to client
             Book newBook = BookSchema.convertBookSchemaToBookProto(bookSchemaDto);
@@ -49,6 +52,44 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
         }
     }
 
+    @Override
+    public void updateBook(UpdateBookRequest updateBookRequest, StreamObserver<CreateBookResponse> createBookResponseStreamObserver) {
+        try {
+            //1. Convert all proto schemas or java pojo and save
+            Optional<BookSchema> bookSchema = booksRepository.findByIdAndIsDeletedAndCreatedBy(updateBookRequest.getId(), false, updateBookRequest.getUserName());
+            if(bookSchema.isEmpty()){
+                throw new ResourceNotFoundException("Resource not found.",  Map.of("Book with Id or slug: ", updateBookRequest.getId(), "message", "Resource Not Found"));
+            }
+
+            BookSchema bookSchemaDto = bookSchema.get();
+
+            List<BookImageSchema> bookImageSchemaList = BookImageSchema.createListOfBookingImageSchemaFromBookImageProto(
+                    updateBookRequest.getBookImageList()
+            );
+            bookSchemaDto.setBookImages(bookImageSchemaList);
+            bookSchemaDto.setBookSlug(createSlug(bookSchemaDto.getTitle(), bookSchemaDto.getId()));
+            bookSchemaDto.setTitle(updateBookRequest.getTitle());
+            bookSchemaDto.setDescription(updateBookRequest.getDescription());
+            bookSchemaDto.setAuthors(updateBookRequest.getAuthorsList());
+            bookSchemaDto.setQuantity(updateBookRequest.getQuantity());
+            bookSchemaDto.setInStock(updateBookRequest.getInStock());
+            bookSchemaDto.setIsbn(updateBookRequest.getIsbn());
+            bookSchemaDto.setDiscount(updateBookRequest.getDiscount());
+            bookSchemaDto.setPrice(updateBookRequest.getPrice());
+
+            BookSchema updatedBookSchemaDto = booksRepository.save(bookSchemaDto);
+
+            //1. Convert all pojo or schemas to proto file and transmit to client
+            Book newBook = BookSchema.convertBookSchemaToBookProto(updatedBookSchemaDto);
+            CreateBookResponse createBookResponse = CreateBookResponse.newBuilder().setBook(newBook).build();
+
+            createBookResponseStreamObserver.onNext(createBookResponse);
+            createBookResponseStreamObserver.onCompleted();
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
     public void listBooks(ListBookRequest listBookRequest, StreamObserver<ListBookResponse> listBookResponseStreamObserver) {
         try{
             //1. Paginate and get records from DB
@@ -199,5 +240,36 @@ public class BookServerService extends BookServiceGrpc.BookServiceImplBase {
         }catch (Exception e) {
             throw e;
         }
+    }
+
+    public void updateCart(UpdateCartRequest updateCartRequest, StreamObserver<Cart> cartStreamObserver) {
+        try{
+
+            Optional<CartSchema> cartSchema = cartsRepository.findById(updateCartRequest.getCartId());
+            if(cartSchema.isEmpty()){
+                throw new ResourceNotFoundException("Resource not found.",  Map.of("Book with Id or slug: ", updateCartRequest.getCartId(), "message", "Resource Not Found"));
+            }
+            CartSchema cartSchemaItem = cartSchema.get();
+            cartSchemaItem.setQuantity(updateCartRequest.getQuantity());
+            CartSchema cartSchemaData = cartsRepository.save(cartSchemaItem);
+
+            //2. Convert schemas to proto for data transport
+            Book bookAdd = BookSchema.convertBookSchemaToBookProto(cartSchemaData.getBook());
+            Cart deleteRecord = Cart.newBuilder()
+                    .setId(cartSchemaData.getId()).setBook(bookAdd)
+                    .setCreatedAt(cartSchemaData.getCreatedAt()).setCreatedBy(cartSchemaData.getCreatedBy())
+                    .setQuantity(cartSchemaData.getQuantity()).build();
+            cartStreamObserver.onNext(deleteRecord);
+            cartStreamObserver.onCompleted();
+
+        }catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String createSlug(String title, String bookId){
+        Slugify slg = Slugify.builder().build();
+        String slugTitle = slg.slugify(title + "-"+ bookId);
+        return slugTitle;
     }
 }

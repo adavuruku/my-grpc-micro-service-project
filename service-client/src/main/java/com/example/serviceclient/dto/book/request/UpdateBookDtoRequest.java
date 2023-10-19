@@ -4,13 +4,17 @@ import com.example.serviceclient.dto.FileResponse;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
 @Data
 @Builder
-public class CreateBookDtoRequest {
+public class UpdateBookDtoRequest {
+
+    @NotNull(message = "BookId cannot be null")
+    @NotBlank(message = "BookId cannot be blank")
+    private String id;
+
     @NotNull(message = "Title cannot be null")
     @NotBlank(message = "Title cannot be blank")
     private String title;
@@ -34,7 +38,8 @@ public class CreateBookDtoRequest {
     @Digits(integer = 10, fraction = 1)
     private double price;
 
-//    private final boolean inStock = true;
+    @NotNull(message = "inStock cannot be null")
+    private boolean inStock;
 
     @NotNull(message = "ISBN cannot be null")
     @NotBlank(message = "ISBN cannot be blank")

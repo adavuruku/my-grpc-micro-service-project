@@ -4,6 +4,8 @@ import com.example.book_service.*;
 import com.example.serviceclient.dto.FileResponse;
 import com.example.serviceclient.dto.book.request.AddCartDtoRequest;
 import com.example.serviceclient.dto.book.request.CreateBookDtoRequest;
+import com.example.serviceclient.dto.book.request.UpdateBookDtoRequest;
+import com.example.serviceclient.dto.book.request.UpdateCartDtoRequest;
 import com.example.serviceclient.dto.book.response.*;
 import com.example.serviceclient.exceptions.ServiceExceptionMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,10 +40,12 @@ public class BookService {
                     .addAllAuthors(createBookDtoRequest.getAuthors())
                     .setCreatedAt(new Date().toString())
                     .setCreatedBy(userName)
-                    .setBookSlug(createSlug(createBookDtoRequest.getTitle()))
+//                    .setBookSlug(createSlug(createBookDtoRequest.getTitle()))
                     .setDescription(createBookDtoRequest.getDescription())
                     .setIsbn(createBookDtoRequest.getIsbn())
                     .setQuantity(createBookDtoRequest.getQuantity())
+                    .setPrice(createBookDtoRequest.getPrice())
+                    .setDiscount(createBookDtoRequest.getDiscount())
                     .setInStock(true).build();
 
             // create the request (protobuf) to pass to server
@@ -52,6 +56,38 @@ public class BookService {
             book = createBookResponse.getBook();
             CreateBookDtoResponse createBookDtoResponse = CreateBookDtoResponse.fromProtoToObject(book);
 
+            return createBookDtoResponse;
+        } catch (StatusRuntimeException error) {
+            var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
+            log.error("Error reason {}", status.getMessage());
+            throw ServiceExceptionMapper.map(error);
+        }
+    }
+
+    public CreateBookDtoResponse updateBook(UpdateBookDtoRequest updateBookDtoRequest, String userName) {
+        try {
+            // create the request (protobuf) to pass to server
+            List<BookImage> bookImages = FileResponse
+                    .fromListOfFileResponsePojoToListOfFileResponseProto(updateBookDtoRequest.getBookImages());
+            UpdateBookRequest updateBookRequest = UpdateBookRequest.newBuilder()
+                    .setTitle(updateBookDtoRequest.getTitle())
+                    .setId(updateBookDtoRequest.getId())
+                    .setUserName(userName)
+                    .addAllBookImage(bookImages)
+                    .addAllAuthors(updateBookDtoRequest.getAuthors())
+//                    .setBookSlug(updateBookDtoRequest.getTitle())
+                    .setDescription(updateBookDtoRequest.getDescription())
+                    .setIsbn(updateBookDtoRequest.getIsbn())
+                    .setQuantity(updateBookDtoRequest.getQuantity())
+                    .setPrice(updateBookDtoRequest.getPrice())
+                    .setDiscount(updateBookDtoRequest.getDiscount())
+                    .setInStock(updateBookDtoRequest.isInStock()).build();
+
+            CreateBookResponse createBookResponse = synchronousClient.updateBook(updateBookRequest);
+
+            //process response from server
+            Book book = createBookResponse.getBook();
+            CreateBookDtoResponse createBookDtoResponse = CreateBookDtoResponse.fromProtoToObject(book);
             return createBookDtoResponse;
         } catch (StatusRuntimeException error) {
             var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
@@ -173,6 +209,23 @@ public class BookService {
             ListCartDtoResponse listCartDtoResponse = ListCartDtoResponse.builder()
                     .carts(addCartDtoResponseList).pagination(bookPagination).build();
             return listCartDtoResponse;
+        } catch (StatusRuntimeException error) {
+            var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
+            log.error("Error reason {}", status.getMessage());
+            throw ServiceExceptionMapper.map(error);
+        }
+    }
+
+    public AddCartDtoResponse updateCart(UpdateCartDtoRequest updateCartDtoRequest, String userName) {
+        try {
+            //1. Create request and access server
+            UpdateCartRequest updateCartRequest = UpdateCartRequest.newBuilder()
+                    .setCartId(updateCartDtoRequest.getCartId()).setQuantity(updateCartDtoRequest.getQuantity()).setUserName(userName).build();
+
+            Cart newCart = synchronousClient.updateCart(updateCartRequest);
+            AddCartDtoResponse addCartDtoResponse = AddCartDtoResponse.fromProtoToObject(newCart);
+
+            return addCartDtoResponse;
         } catch (StatusRuntimeException error) {
             var status = io.grpc.protobuf.StatusProto.fromThrowable(error);
             log.error("Error reason {}", status.getMessage());
