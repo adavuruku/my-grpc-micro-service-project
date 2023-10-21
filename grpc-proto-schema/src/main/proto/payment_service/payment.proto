@@ -12,15 +12,13 @@ service PaymentService {
   rpc createTransaction(Transaction) returns (TransactionResponse) {}
   rpc updateTransactionDeliveryStatus(UpdateDeliveryStatusRequest) returns (TransactionResponse) {}
   rpc listTransaction(ListTransactionRequest) returns (ListTransactionResponse) {}
-  rpc searchTransactionReference(SearchTransactionRequest) returns (ListTransactionResponse) {}
+  rpc searchTransactionReference(SearchTransactionRequest) returns (TransactionResponse) {}
   rpc openTransaction(OpenTransactionRequest) returns (TransactionResponse) {}
 }
 
 message SearchTransactionRequest{
     string userName = 1;
-    int32 page = 2;
-    int32 perPage = 3;
-    string transactionReference = 4;
+    string transactionReference = 2;
 }
 
 message OpenTransactionRequest{
@@ -114,11 +112,11 @@ message UpdateDeliveryStatusRequest{
     string id = 1;
     string transactionRef = 2;
     bool deliveryStatus = 3;
-    PAYMENT_METHOD paymentMethod = 4;
+    string paymentMethod = 4;
 }
 
 message ListTransactionResponse{
-    repeated Transaction transactions = 1;
+    repeated TransactionResponse transactionsResponse = 1;
     Pagination pagination = 2;
 }
 message ListTransactionRequest{

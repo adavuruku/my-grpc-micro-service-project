@@ -77,6 +77,33 @@ public class TransactionSchema {
                 .setDeliveryAddress(deliveryAddress).build();
     }
 
+    public static List<TransactionResponse> convertListOfTransactionSchemaToListOfTransactionResponseProto(List<TransactionSchema> transactionSchemaList) {
+        List<TransactionResponse> transactionResponseList = new ArrayList<>();
+        for(TransactionSchema transactionSchemaData: transactionSchemaList){
+            List<com.example.payment_service.BookOrder> bookOrderList =
+                    BookOrder.convertListOfBookOrderPojoToBookOrderProto(transactionSchemaData.getBookOrders());
+            DeliveryAddress deliveryAddress = DeliveryAddressSchema.convertDeliveryAddressSchemaToDeliveryAddressProto(transactionSchemaData.getDeliveryAddressSchema());
+
+            transactionResponseList.add(TransactionResponse.newBuilder()
+                    .setId(transactionSchemaData.getId())
+                    .addAllBookOrders(bookOrderList)
+                    .setTransactionRef(transactionSchemaData.getTransactionRef())
+                    .setCreatedAt(transactionSchemaData.getCreatedAt())
+                    .setCreatedBy(transactionSchemaData.getCreatedBy())
+                    .setCreatedByName(transactionSchemaData.getCreatedByName())
+                    .setPaymentMethod(transactionSchemaData.getPaymentMethod())
+                    .setPaymentOption(transactionSchemaData.getPaymentOption())
+                    .setDiscountOnGrandTotal(transactionSchemaData.getDiscountOnGrandTotal())
+                    .setGrandTotal(transactionSchemaData.getGrandTotal())
+                    .setOtherCostCharges(transactionSchemaData.getOtherCostCharges())
+                    .setDeliveryStatus(transactionSchemaData.isDeliveryStatus())
+                    .setIsReceiptPaid(transactionSchemaData.isReceiptPaid())
+                    .setDeliveryAddress(deliveryAddress).build()
+            );
+        }
+        return transactionResponseList;
+    }
+
 
 //    transactionRef:
 //    createdBy:

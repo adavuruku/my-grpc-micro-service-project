@@ -22,4 +22,9 @@ public interface TransactionRepo extends MongoRepository<TransactionSchema, Stri
 
     public long count();
 
+    Optional<TransactionSchema> findByIdAndTransactionRef(String id, String transactionRef);
+
+    Page<TransactionSchema> findByCreatedBy(String userName, Pageable paging);
+
+    Optional<TransactionSchema> findByCreatedByAndTransactionRef(String userName, String transactionReference);
 }

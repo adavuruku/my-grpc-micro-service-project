@@ -6,6 +6,9 @@ grpc:
     book-service:
       address: static://localhost:9001
       negotiationType: plainText
+    payment-service:
+      address: static://localhost:9002
+      negotiationType: plainText
 server:
   port: 8081
   servlet:

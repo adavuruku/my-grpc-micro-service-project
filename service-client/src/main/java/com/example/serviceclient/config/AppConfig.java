@@ -2,9 +2,11 @@ package com.example.serviceclient.config;
 
 import com.cloudinary.Cloudinary;
 import com.example.book_service.BookServiceGrpc;
+import com.example.payment_service.PaymentServiceGrpc;
 import com.example.serviceclient.security.UserInfoSecurityService;
 import com.example.serviceclient.service.FileService;
 import com.example.serviceclient.service.book.BookService;
+import com.example.serviceclient.service.payment.PaymentService;
 import com.example.serviceclient.service.user.UserService;
 import com.example.user_service.UserServiceGrpc;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -30,6 +32,10 @@ public class AppConfig {
         return new BookService(synchronousClient);
     }
 
+    @Bean
+    public PaymentService createPaymentService(@GrpcClient("payment-service") PaymentServiceGrpc.PaymentServiceBlockingStub synchronousClient){
+        return new PaymentService(synchronousClient);
+    }
     @Bean
     public UserInfoSecurityService createService(UserService userClientService){
         return new UserInfoSecurityService(userClientService);

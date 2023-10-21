@@ -2,6 +2,7 @@ package com.example.serviceclient.service.book;
 
 import com.example.book_service.*;
 import com.example.serviceclient.dto.FileResponse;
+import com.example.serviceclient.dto.book.CustomPagination;
 import com.example.serviceclient.dto.book.request.AddCartDtoRequest;
 import com.example.serviceclient.dto.book.request.CreateBookDtoRequest;
 import com.example.serviceclient.dto.book.request.UpdateBookDtoRequest;
@@ -108,8 +109,8 @@ public class BookService {
             List<CreateBookDtoResponse> createBookDtoResponseList = CreateBookDtoResponse
                     .fromListOfBookResponseProtoToPojo(createBookResponse.getBookList());
 
-            Pagination pagination = createBookResponse.getPagination();
-            BookPagination bookPagination = BookPagination.builder()
+            com.example.book_service.Pagination pagination = createBookResponse.getPagination();
+            CustomPagination bookPagination = CustomPagination.builder()
                     .currentPage(pagination.getCurrentPage())
                     .hasNext(pagination.getHasNext()).hasPrevious(pagination.getHasPrevious())
                     .perPage(pagination.getPerPage()).totalPage(pagination.getTotalPage()).totalItem(pagination.getTotalItem()).build();
@@ -200,8 +201,8 @@ public class BookService {
             List<AddCartDtoResponse> addCartDtoResponseList = AddCartDtoResponse
                     .fromListOfCartResponseProtoToPojo(createCartResponse.getCartsList());
 
-            Pagination pagination = createCartResponse.getPagination();
-            BookPagination bookPagination = BookPagination.builder()
+            com.example.book_service.Pagination pagination = createCartResponse.getPagination();
+            CustomPagination bookPagination = CustomPagination.builder()
                     .currentPage(pagination.getCurrentPage())
                     .hasNext(pagination.getHasNext()).hasPrevious(pagination.getHasPrevious())
                     .perPage(pagination.getPerPage()).totalPage(pagination.getTotalPage()).totalItem(pagination.getTotalItem()).build();

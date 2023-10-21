@@ -51,6 +51,65 @@ public class PaymentService extends PaymentServiceGrpc.PaymentServiceImplBase {
             throw e;
         }
     }
+
+    public void updateTransactionDeliveryStatus(UpdateDeliveryStatusRequest updateDeliveryStatusRequest,
+                                                StreamObserver<TransactionResponse> transactionResponseStreamObserver){
+        Optional<TransactionSchema> transactionSchema = transactionRepo.findByIdAndTransactionRef(updateDeliveryStatusRequest.getId(),updateDeliveryStatusRequest.getTransactionRef());
+        if(transactionSchema.isEmpty()){
+            throw new ResourceNotFoundException("Resource not found.",  Map.of("Transaction request details : ", "ID: " + updateDeliveryStatusRequest.getId()+" Transaction Ref: "+updateDeliveryStatusRequest.getTransactionRef(), "message", "Resource Not Found"));
+        }
+
+        TransactionSchema transactionSchemaData = transactionSchema.get();
+        transactionSchemaData.setDeliveryStatus(updateDeliveryStatusRequest.getDeliveryStatus());
+        transactionSchemaData.setReceiptPaid(false);
+        if(updateDeliveryStatusRequest.getDeliveryStatus()){
+            transactionSchemaData.setReceiptPaid(true);
+            transactionSchemaData.setPaymentMethod(updateDeliveryStatusRequest.getPaymentMethod());
+        }
+        transactionRepo.save(transactionSchemaData);
+
+        TransactionResponse transactionResponse = TransactionSchema.convertTransactionSchemaToTransactionProto(transactionSchemaData);
+        transactionResponseStreamObserver.onNext(transactionResponse);
+        transactionResponseStreamObserver.onCompleted();
+    }
+
+    public void listTransaction(ListTransactionRequest listTransactionRequest,
+                                StreamObserver<ListTransactionResponse> listTransactionResponseStreamObserver){
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable paging = PageRequest.of(listTransactionRequest.getPage(), listTransactionRequest.getPerPage(), sort);
+        Page<TransactionSchema> pageTransactionSchema = transactionRepo.findByCreatedBy(listTransactionRequest.getUserName(), paging);
+
+        List<TransactionSchema> transactionSchemaList = pageTransactionSchema.getContent();
+
+        List<TransactionResponse> transactionList = TransactionSchema.convertListOfTransactionSchemaToListOfTransactionResponseProto(
+                transactionSchemaList
+        );
+        Pagination pagination = Pagination.newBuilder().setPerPage(pageTransactionSchema.getSize())
+                .setCurrentPage(pageTransactionSchema.getNumber()).setTotalPage(pageTransactionSchema.getTotalPages())
+                .setHasNext(pageTransactionSchema.hasNext()).setHasPrevious(pageTransactionSchema.hasPrevious())
+                .setTotalItem(pageTransactionSchema.getTotalElements()).build();
+
+        ListTransactionResponse listTransactionResponse = ListTransactionResponse.newBuilder()
+                .addAllTransactionsResponse(transactionList).setPagination(pagination).build();
+
+        listTransactionResponseStreamObserver.onNext(listTransactionResponse);
+        listTransactionResponseStreamObserver.onCompleted();
+
+    }
+
+    public void searchTransactionReference(SearchTransactionRequest searchTransactionRequest,
+                                           StreamObserver<TransactionResponse> transactionResponseStreamObserver){
+        Optional<TransactionSchema> transactionSchema = transactionRepo.findByCreatedByAndTransactionRef(searchTransactionRequest.getUserName(), searchTransactionRequest.getTransactionReference());
+
+        if(transactionSchema.isEmpty()){
+            throw new ResourceNotFoundException("Resource not found.",  Map.of("Transaction request details : ", " Transaction Ref: "+searchTransactionRequest.getTransactionReference(), "message", "Resource Not Found"));
+        }
+
+        TransactionResponse transactionResponse = TransactionSchema.convertTransactionSchemaToTransactionProto(transactionSchema.get());
+        transactionResponseStreamObserver.onNext(transactionResponse);
+        transactionResponseStreamObserver.onCompleted();
+
+    }
     /**
      * Delivery Address Methods begins
      * **/

@@ -1,11 +1,11 @@
-package com.example.serviceclient.dto.book.response;
+package com.example.serviceclient.dto.book;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class BookPagination {
+public class CustomPagination {
     private long currentPage;
     private long perPage;
     private long totalItem;
