@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package payment_service;
+
+option java_multiple_files = true;
+option java_package = "com.example.payment_service";
+
+service PaymentService {
+  rpc createDeliveryAddress(DeliveryAddress) returns (DeliveryAddress) {}
+  rpc listDeliveryAddress(ListDeliveryAddressRequest) returns (ListDeliveryAddressResponse) {}
+
+  rpc createTransaction(Transaction) returns (TransactionResponse) {}
+  rpc updateTransactionDeliveryStatus(UpdateDeliveryStatusRequest) returns (TransactionResponse) {}
+  rpc listTransaction(ListTransactionRequest) returns (ListTransactionResponse) {}
+  rpc searchTransactionReference(SearchTransactionRequest) returns (ListTransactionResponse) {}
+  rpc openTransaction(OpenTransactionRequest) returns (TransactionResponse) {}
+}
+
+message SearchTransactionRequest{
+    string userName = 1;
+    int32 page = 2;
+    int32 perPage = 3;
+    string transactionReference = 4;
+}
+
+message OpenTransactionRequest{
+    string userName = 1;
+    string searchCriteria = 2;
+}
+message DeliveryAddress {
+    string id = 1;
+    string state = 2;
+    string localGovernment = 3;
+    string locationAddress = 4;
+    string createdBy = 5;
+    string createdAt = 6;
+}
+
+message Pagination{
+    bool hasPrevious = 1;
+    bool hasNext = 2;
+    int64 totalPage = 3;
+    int64 currentPage = 4;
+    int64 totalItem = 5;
+    int64 perPage = 6;
+}
+
+message ListDeliveryAddressResponse{
+    repeated DeliveryAddress deliveryAddress = 1;
+    Pagination pagination = 2;
+}
+message ListDeliveryAddressRequest{
+    string userName = 1;
+    int32 page = 2;
+    int32 perPage = 3;
+}
+
+message BookOrder {
+     string bookId = 1;
+     string title = 2;
+     double price = 3;
+     int64 quantity = 4;
+     double discount = 5;
+     string isbn = 6;
+     double amount = 7;
+}
+
+enum PAYMENT_METHOD{
+    CASH = 0;
+    CREDIT_CARD = 1;
+    DEBIT_CARD = 2;
+    TRANSFER = 3;
+}
+enum PAYMENT_OPTION{
+    PAY_BEFORE_DELIVERY = 0;
+    PAY_ON_DELIVERY = 1;
+}
+
+message Transaction{
+    string id = 1;
+    string transactionRef = 2;
+    string deliveryAddress = 3;
+    repeated BookOrder bookOrders = 4;
+    string createdByName = 5;
+    string createdAt = 6;
+    string createdBy = 7;
+    string paymentMethod = 8;
+    string paymentOption = 9;
+    double discountOnGrandTotal = 10;
+    double otherCostCharges = 11;
+    double grandTotal = 12;
+    bool deliveryStatus = 13;
+    bool isReceiptPaid = 14;
+}
+
+message TransactionResponse{
+    string id = 1;
+    string transactionRef = 2;
+    DeliveryAddress deliveryAddress = 3;
+    repeated BookOrder bookOrders = 4;
+    string createdByName = 5;
+    string createdAt = 6;
+    string createdBy = 7;
+    string paymentMethod = 8;
+    string paymentOption = 9;
+    double discountOnGrandTotal = 10;
+    double otherCostCharges = 11;
+    double grandTotal = 12;
+    bool deliveryStatus = 13;
+    bool isReceiptPaid = 14;
+}
+
+message UpdateDeliveryStatusRequest{
+    string id = 1;
+    string transactionRef = 2;
+    bool deliveryStatus = 3;
+    PAYMENT_METHOD paymentMethod = 4;
+}
+
+message ListTransactionResponse{
+    repeated Transaction transactions = 1;
+    Pagination pagination = 2;
+}
+message ListTransactionRequest{
+    string userName = 1;
+    int32 page = 2;
+    int32 perPage = 3;
+}
